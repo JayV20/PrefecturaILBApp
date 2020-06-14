@@ -22,26 +22,6 @@ public class AccountInteractorClass implements AccountInteractor{
         mRealTimeDataBase = new RealTimeDataBase();
     }
 
-    private void post(ArrayList<Maestro> maestros, int typeEvent, int resMsg, User user){
-        AccountEvents events = new AccountEvents();
-        events.setMessage(resMsg);
-        events.setTypeEvent(typeEvent);
-        events.setMaestro(maestros);
-        events.setUser(user);
-        EventBus.getDefault().post(events);
-    }
-
-    private void post(ArrayList<Maestro> maestros, int typeEvent){
-        post(maestros, typeEvent, 0, null);
-    }
-
-    private void post(int type,User user){
-        post(null,type, 0, user);
-    }
-
-    private void post(int typeEvent, int resMsg){
-        post(null, typeEvent, resMsg, null);
-    }
 
     @Override
     public void signOut() {
@@ -82,4 +62,27 @@ public class AccountInteractorClass implements AccountInteractor{
             }
         });
     }
+
+
+    private void post(ArrayList<Maestro> maestros, int typeEvent, int resMsg, User user){
+        AccountEvents events = new AccountEvents();
+        events.setMessage(resMsg);
+        events.setTypeEvent(typeEvent);
+        events.setMaestro(maestros);
+        events.setUser(user);
+        EventBus.getDefault().post(events);
+    }
+
+    private void post(ArrayList<Maestro> maestros, int typeEvent){
+        post(maestros, typeEvent, 0, null);
+    }
+
+    private void post(int type,User user){
+        post(null,type, 0, user);
+    }
+
+    private void post(int typeEvent, int resMsg){
+        post(null, typeEvent, resMsg, null);
+    }
+
 }

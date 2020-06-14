@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    >
+    android:layout_marginBottom="@dimen/common_padding_min">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -13,11 +13,6 @@
         android:padding="8dp"
         android:textAlignment="center"
         android:textAllCaps="false"
-        style="@style/itemLarge"
-
-        />
-
-
-
+        style="@style/itemLarge" />
 
 </com.google.android.material.card.MaterialCardView>

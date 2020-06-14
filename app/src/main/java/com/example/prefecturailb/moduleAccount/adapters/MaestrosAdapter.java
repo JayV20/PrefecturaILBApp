@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,7 +46,7 @@ public class MaestrosAdapter extends RecyclerView.Adapter <MaestrosAdapter.ViewH
     @Override
     public void onBindViewHolder(@NonNull MaestrosAdapter.ViewHolder holder, int position) {
         final Maestro maestro = maestros.get(position);
-        //holder.setOnClickListener(listener);
+        holder.setListener(maestro,listener);
         holder.tv_name.setText(maestro.getNombre());
         holder.civ_photo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_account_circle));
         //holder.civ_photo.setImageURI(maestro.getImagenUrl());
@@ -65,12 +66,14 @@ public class MaestrosAdapter extends RecyclerView.Adapter <MaestrosAdapter.ViewH
         TextView tv_name;
         @BindView(R.id.civ_photo)
         CircleImageView civ_photo;
+        @BindView(R.id.containerMain)
+        ConstraintLayout containerMain;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-        void setOnClickListener(OnItemClickListener listener){
-            listener.onItemClicked();
+        void setListener(Maestro maestro ,final OnItemClickListener listener){
+            containerMain.setOnClickListener(view ->listener.onItemClicked(maestro));
         }
     }
 }

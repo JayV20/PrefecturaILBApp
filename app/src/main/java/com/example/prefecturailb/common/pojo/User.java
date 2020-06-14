@@ -7,6 +7,8 @@ public class User {
     public static final String NAME="name";
     public static final String EMAIL="email";
     public static final String TYPE="type";
+    public static final String PROFESOR="profesor";
+    public static final String PREFECTO="prefecto";
 
 
 

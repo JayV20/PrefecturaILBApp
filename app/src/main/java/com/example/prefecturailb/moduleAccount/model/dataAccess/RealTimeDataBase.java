@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.example.prefecturailb.R;
 import com.example.prefecturailb.common.model.dataAccess.FirebaseRealtimeDatabaseAPI;
 import com.example.prefecturailb.common.pojo.Maestro;
+import com.example.prefecturailb.common.pojo.Materia;
 import com.example.prefecturailb.common.pojo.User;
 import com.example.prefecturailb.moduleAccount.events.AccountEvents;
 import com.example.prefecturailb.moduleLogin.events.LoginEvents;
@@ -15,6 +16,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RealTimeDataBase {
 
@@ -63,6 +66,73 @@ public class RealTimeDataBase {
             mDatabaseAPI.getMaestroReference().removeEventListener(valueEventListener);
         }
     }
+    public void checkGroupExist(String profName, String grupo, GroupExistCallback callback){
+       Query checkGroup=mDatabaseAPI.getMaestroReferenceByName(profName).orderByChild(Materia.GRUPO).equalTo(grupo);
+        checkGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    callback.onSuccess();
+                }else{
+                    callback.onNotExist();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                switch (databaseError.getCode()){
+                    case DatabaseError.NETWORK_ERROR:
+                        callback.onError();
+                        break;
+                }
+            }
+        });
+    }
+    public void assistence(String name, String grupo, String typeUser){
+        if (typeUser.equals(User.PROFESOR)){
+         Map<String,Object> confirmacion= new HashMap<>();
+         confirmacion.put(Materia.VALMAESTRO,1);
+         mDatabaseAPI.getMaestroReferenceByName(name).addListenerForSingleValueEvent(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
+                     for (DataSnapshot snapshot2:snapshot1.getChildren()){
+                         if(snapshot2.child(Materia.GRUPO).getValue().toString().equals(grupo)){
+                             snapshot2.getRef().updateChildren(confirmacion);
+                         }
+                     }
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+             }
+         });
+        }else if (typeUser.equals(User.PREFECTO)){
+            Map<String,Object> confirmacion= new HashMap<>();
+            confirmacion.put(Materia.VALPREFECTO,1);
+            mDatabaseAPI.getMaestroReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
+                        for (DataSnapshot snapshot2:snapshot1.getChildren()){
+                            for (DataSnapshot snapshot3:snapshot2.getChildren())
+                            if(snapshot3.child(Materia.GRUPO).getValue().toString().equals(grupo)){
+                                snapshot3.getRef().updateChildren(confirmacion);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
 
     public void getUserByEmail(String email, UserCallBack userCallBack){
         DatabaseReference databaseReference = mDatabaseAPI.getUsuariosReference();

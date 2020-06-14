@@ -35,7 +35,7 @@ public class FirebaseRealtimeDatabaseAPI {
         return  getRootReference().child(PATH_USUARIOS);
     }
 
-    public DatabaseReference getMaestroReferenceMaename(String Maename){
-        return getMaestroReference().child(Maename);
+    public DatabaseReference getMaestroReferenceByName(String Name){
+        return getMaestroReference().child(Name);
     }
 }

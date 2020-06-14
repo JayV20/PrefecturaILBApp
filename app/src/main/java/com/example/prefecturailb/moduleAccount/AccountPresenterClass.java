@@ -78,7 +78,7 @@ public class AccountPresenterClass implements AccountPresenter{
                     String hora=new SimpleDateFormat("hh:mm:ss",Locale.getDefault()).format(new Date());
                     String fecha=new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(new Date());
                     if (user!=null) {
-                    Log.e("Usuario",user.getType()+"  "+user.getName());
+                    Log.e("Usuario",user.getType()+"  "+user.getName().toUpperCase());
                     Log.e("Hora",hora);
                     Log.e("Fecha",fecha);
                         // TODO: 11/06/2020 Hacer una consulta en la base de datos, y comparar si el maestro y el grupo es el mismo caragar la asistencia.

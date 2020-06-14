@@ -6,9 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.prefecturailb.moduleAccount.view.AccountActivity;
 import com.example.prefecturailb.R;
 import com.example.prefecturailb.common.pojo.User;
@@ -17,7 +15,6 @@ import com.example.prefecturailb.moduleLogin.LoginPresenterClass;
 import com.example.prefecturailb.moduleLogin.utils.LoginValidations;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
