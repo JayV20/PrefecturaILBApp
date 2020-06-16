@@ -11,6 +11,7 @@ public class AccountEvents {
     public static final int ADD_SUCCEFULL = 1;
     public static final int GET_USER_SUCCESFULL = 2;
     public static final int VERIFICATION_SUCCESFULL = 3;
+    public static final int ASSISTANCE_SUCCESS = 4;
 
     public static final int CONNECTION_ERROR = 100;
     public static final int SEARCH_ERROR = 102;

@@ -1,6 +1,8 @@
 package com.example.prefecturailb.moduleAccount;
 
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.prefecturailb.R;
@@ -72,7 +74,7 @@ public class AccountPresenterClass implements AccountPresenter{
                     String hora=new SimpleDateFormat("hh:mm:ss",Locale.getDefault()).format(new Date());
                     String fecha=new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(new Date());
                     if (user!=null) {
-                    //Log.e("Usuario",user.getType()+"  "+user.getName().toUpperCase());
+                    Log.e("Usuario",user.getType()+"  "+user.getName().toUpperCase());
                     ///Log.e("Hora",hora);
                     //Log.e("Fecha",fecha);
                     //Log.e("QR",QrContent[0]+"  "+QrContent[1]);
@@ -94,6 +96,9 @@ public class AccountPresenterClass implements AccountPresenter{
                 break;
             case AccountEvents.VERIFICATION_SUCCESFULL:
                 mView.onMessage(R.string.verif_successfull);
+                break;
+            case AccountEvents.ASSISTANCE_SUCCESS:
+                mView.onMessage(R.string.assis_success);
                 break;
             case AccountEvents.GET_USER_NETWORK_ERROR:
             case AccountEvents.CONNECTION_ERROR:

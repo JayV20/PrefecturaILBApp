@@ -97,14 +97,17 @@ public class RealTimeDataBase {
 
     public void checkGroupExist(String profName, String grupo, String typeUser, GroupExistCallback callback){
         if (typeUser.equals(User.PROFESOR)) {
-            Query checkGroup=mDatabaseAPI.getMaestroReferenceByName(profName).orderByChild(Materia.GRUPO).equalTo(grupo).limitToFirst(1);
-            checkGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+            mDatabaseAPI.getMaestroReferenceByName(profName).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
-                        callback.onSuccess();
-                    }else{
-                        callback.onNotExist();
+                    for (DataSnapshot snapshot1: dataSnapshot.getChildren()){
+                        for (DataSnapshot snapshot2 : snapshot1.getChildren()){
+                            if (snapshot2.child(Materia.GRUPO).getValue()!=null) {
+                                if (snapshot2.child(Materia.GRUPO).getValue().equals(grupo)) {
+                                    callback.onSuccess();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -117,6 +120,8 @@ public class RealTimeDataBase {
                     }
                 }
             });
+        }else if (typeUser.equals(User.PREFECTO)){
+                 callback.onSuccess();
         }
     }
     public void assistence(String name, String grupo, String typeUser ,BasicListener listener){
@@ -128,6 +133,7 @@ public class RealTimeDataBase {
              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                  for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
                      for (DataSnapshot snapshot2:snapshot1.getChildren()){
+                         System.out.println(snapshot2.child(Materia.GRUPO).getValue());
                          if(snapshot2.child(Materia.GRUPO).getValue().toString().equals(grupo)){
                              snapshot2.getRef().updateChildren(confirmacion);
                              listener.onSuccess(AccountEvents.VERIFICATION_SUCCESFULL);
@@ -153,10 +159,23 @@ public class RealTimeDataBase {
                     for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
                         for (DataSnapshot snapshot2:snapshot1.getChildren()){
                             for (DataSnapshot snapshot3:snapshot2.getChildren())
-                            if(snapshot3.child(Materia.GRUPO).getValue().toString().equals(grupo)){
-                                snapshot3.getRef().updateChildren(confirmacion);
-                                listener.onSuccess(AccountEvents.VERIFICATION_SUCCESFULL);
-                            }
+                                if (snapshot3.child(Materia.GRUPO).getValue()!=null) {
+                                    if(snapshot3.child(Materia.GRUPO).getValue().toString().equals(grupo)){
+                                        snapshot3.getRef().updateChildren(confirmacion);
+                                        listener.onSuccess(AccountEvents.VERIFICATION_SUCCESFULL);
+                                        int prefecto=Integer.parseInt(snapshot3.child(Materia.VALPREFECTO).getValue().toString());
+                                        int maestro=Integer.parseInt(snapshot3.child(Materia.VALMAESTRO).getValue().toString());
+                                        int asis=Integer.parseInt(snapshot3.child(Materia.ASISTENCIAS).getValue().toString());
+                                        if (maestro==1&&prefecto==1){
+                                            Map<String,Object> asistencia=new HashMap<>();
+                                            asistencia.put(Materia.VALPREFECTO,0);
+                                            asistencia.put(Materia.VALMAESTRO,0);
+                                            asistencia.put(Materia.ASISTENCIAS,asis+1);
+                                            snapshot3.getRef().updateChildren(asistencia);
+                                            listener.onSuccess(AccountEvents.ASSISTANCE_SUCCESS);
+                                        }
+                                    }
+                                }
                         }
                     }
                 }
