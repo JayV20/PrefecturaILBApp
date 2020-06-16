@@ -162,7 +162,7 @@ public class AccountActivity extends AppCompatActivity implements AccountView, O
     }
 
     @Override
-    public void onError(int message) {
+    public void onMessage(int message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

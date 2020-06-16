@@ -10,11 +10,14 @@ public class AccountEvents {
     //public static final int SEARCH_SUCCEFULL = 0;
     public static final int ADD_SUCCEFULL = 1;
     public static final int GET_USER_SUCCESFULL = 2;
+    public static final int VERIFICATION_SUCCESFULL = 3;
+
     public static final int CONNECTION_ERROR = 100;
     public static final int SEARCH_ERROR = 102;
     public static final int UNKOWN_ERROR = 103;
     public static final int GET_USER_NETWORK_ERROR = 104;
     public static final int GET_USER_UNKOWN_ERROR = 105;
+    public static final int NO_GROUP_ERROR = 106;
 
     private int typeEvent;
     private int message;

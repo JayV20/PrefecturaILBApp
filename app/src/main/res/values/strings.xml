@@ -29,4 +29,6 @@
     <string name="error_canceled">La operación ha sido cancelada.</string>
     <string name="error_qr_format">Ha escaneado un QR con un formato incorrecto.</string>
     <string name="user_success">Se han obtenido los datos del usuario.</string>
+    <string name="error_no_group">El grupo no coincide con el profesor.</string>
+    <string name="verif_successfull">Pase de lista verificado.</string>
 </resources>

@@ -1,11 +1,8 @@
 package com.example.prefecturailb.moduleAccount;
 
 import android.content.Intent;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.example.prefecturailb.R;
 import com.example.prefecturailb.common.pojo.User;
 import com.example.prefecturailb.moduleAccount.events.AccountEvents;
@@ -14,10 +11,8 @@ import com.example.prefecturailb.moduleAccount.model.AccountInteractorClass;
 import com.example.prefecturailb.moduleAccount.view.AccountView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -67,26 +62,24 @@ public class AccountPresenterClass implements AccountPresenter{
 
     @Override
     public void onResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
             if (result!= null){
                 String QR= result.getContents();
                 if (QR == null){
-                    mView.onError(R.string.error_canceled);
+                    mView.onMessage(R.string.error_canceled);
                 }else {
                     String [] QrContent=QR.split(";");
                     String hora=new SimpleDateFormat("hh:mm:ss",Locale.getDefault()).format(new Date());
                     String fecha=new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(new Date());
                     if (user!=null) {
-                    Log.e("Usuario",user.getType()+"  "+user.getName().toUpperCase());
-                    Log.e("Hora",hora);
-                    Log.e("Fecha",fecha);
-                        // TODO: 11/06/2020 Hacer una consulta en la base de datos, y comparar si el maestro y el grupo es el mismo caragar la asistencia.
+                    //Log.e("Usuario",user.getType()+"  "+user.getName().toUpperCase());
+                    ///Log.e("Hora",hora);
+                    //Log.e("Fecha",fecha);
+                    //Log.e("QR",QrContent[0]+"  "+QrContent[1]);
+                        mInteractor.assistance(user,hora,fecha,QrContent[0],QrContent[1]);
                     }
-                    Log.e("QR",QrContent[0]+"  "+QrContent[1]);
                 }
             }
-        //}
     }
 
     @Subscribe
@@ -99,11 +92,15 @@ public class AccountPresenterClass implements AccountPresenter{
             case AccountEvents.GET_USER_SUCCESFULL:
                 user=events.getUser();
                 break;
+            case AccountEvents.VERIFICATION_SUCCESFULL:
+                mView.onMessage(R.string.verif_successfull);
+                break;
             case AccountEvents.GET_USER_NETWORK_ERROR:
             case AccountEvents.CONNECTION_ERROR:
             case AccountEvents.SEARCH_ERROR:
             case AccountEvents.UNKOWN_ERROR:
-                mView.onError(events.getMessage());
+            case AccountEvents.NO_GROUP_ERROR:
+                mView.onMessage(events.getMessage());
                 break;
         }
     }

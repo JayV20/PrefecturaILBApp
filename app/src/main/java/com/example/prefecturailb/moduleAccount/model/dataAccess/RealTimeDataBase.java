@@ -3,6 +3,7 @@ package com.example.prefecturailb.moduleAccount.model.dataAccess;
 import androidx.annotation.NonNull;
 
 import com.example.prefecturailb.R;
+import com.example.prefecturailb.common.BasicListener;
 import com.example.prefecturailb.common.model.dataAccess.FirebaseRealtimeDatabaseAPI;
 import com.example.prefecturailb.common.pojo.Maestro;
 import com.example.prefecturailb.common.pojo.Materia;
@@ -66,74 +67,6 @@ public class RealTimeDataBase {
             mDatabaseAPI.getMaestroReference().removeEventListener(valueEventListener);
         }
     }
-    public void checkGroupExist(String profName, String grupo, GroupExistCallback callback){
-       Query checkGroup=mDatabaseAPI.getMaestroReferenceByName(profName).orderByChild(Materia.GRUPO).equalTo(grupo);
-        checkGroup.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    callback.onSuccess();
-                }else{
-                    callback.onNotExist();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                switch (databaseError.getCode()){
-                    case DatabaseError.NETWORK_ERROR:
-                        callback.onError();
-                        break;
-                }
-            }
-        });
-    }
-    public void assistence(String name, String grupo, String typeUser){
-        if (typeUser.equals(User.PROFESOR)){
-         Map<String,Object> confirmacion= new HashMap<>();
-         confirmacion.put(Materia.VALMAESTRO,1);
-         mDatabaseAPI.getMaestroReferenceByName(name).addListenerForSingleValueEvent(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
-                     for (DataSnapshot snapshot2:snapshot1.getChildren()){
-                         if(snapshot2.child(Materia.GRUPO).getValue().toString().equals(grupo)){
-                             snapshot2.getRef().updateChildren(confirmacion);
-                         }
-                     }
-                 }
-             }
-
-             @Override
-             public void onCancelled(@NonNull DatabaseError databaseError) {
-
-             }
-         });
-        }else if (typeUser.equals(User.PREFECTO)){
-            Map<String,Object> confirmacion= new HashMap<>();
-            confirmacion.put(Materia.VALPREFECTO,1);
-            mDatabaseAPI.getMaestroReference().addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
-                        for (DataSnapshot snapshot2:snapshot1.getChildren()){
-                            for (DataSnapshot snapshot3:snapshot2.getChildren())
-                            if(snapshot3.child(Materia.GRUPO).getValue().toString().equals(grupo)){
-                                snapshot3.getRef().updateChildren(confirmacion);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
-
     public void getUserByEmail(String email, UserCallBack userCallBack){
         DatabaseReference databaseReference = mDatabaseAPI.getUsuariosReference();
         Query userByEmail = databaseReference.orderByChild(User.EMAIL).equalTo(email);
@@ -160,6 +93,84 @@ public class RealTimeDataBase {
                 }
             }
         });
+    }
+
+    public void checkGroupExist(String profName, String grupo, String typeUser, GroupExistCallback callback){
+        if (typeUser.equals(User.PROFESOR)) {
+            Query checkGroup=mDatabaseAPI.getMaestroReferenceByName(profName).orderByChild(Materia.GRUPO).equalTo(grupo).limitToFirst(1);
+            checkGroup.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        callback.onSuccess();
+                    }else{
+                        callback.onNotExist();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    switch (databaseError.getCode()){
+                        case DatabaseError.NETWORK_ERROR:
+                            callback.onError();
+                            break;
+                    }
+                }
+            });
+        }
+    }
+    public void assistence(String name, String grupo, String typeUser ,BasicListener listener){
+        Map<String,Object> confirmacion= new HashMap<>();
+        if (typeUser.equals(User.PROFESOR)){
+         confirmacion.put(Materia.VALMAESTRO,1);
+         mDatabaseAPI.getMaestroReferenceByName(name).addListenerForSingleValueEvent(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
+                     for (DataSnapshot snapshot2:snapshot1.getChildren()){
+                         if(snapshot2.child(Materia.GRUPO).getValue().toString().equals(grupo)){
+                             snapshot2.getRef().updateChildren(confirmacion);
+                             listener.onSuccess(AccountEvents.VERIFICATION_SUCCESFULL);
+                         }
+                     }
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+                switch (databaseError.getCode()){
+                    case DatabaseError.NETWORK_ERROR:
+                        listener.onError(AccountEvents.CONNECTION_ERROR,R.string.error_connection);
+                        break;
+                }
+             }
+         });
+        }else if (typeUser.equals(User.PREFECTO)){
+            confirmacion.put(Materia.VALPREFECTO,1);
+            mDatabaseAPI.getMaestroReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot1:dataSnapshot.getChildren()){
+                        for (DataSnapshot snapshot2:snapshot1.getChildren()){
+                            for (DataSnapshot snapshot3:snapshot2.getChildren())
+                            if(snapshot3.child(Materia.GRUPO).getValue().toString().equals(grupo)){
+                                snapshot3.getRef().updateChildren(confirmacion);
+                                listener.onSuccess(AccountEvents.VERIFICATION_SUCCESFULL);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    switch (databaseError.getCode()){
+                        case DatabaseError.NETWORK_ERROR:
+                            listener.onError(AccountEvents.CONNECTION_ERROR,R.string.error_connection);
+                            break;
+                    }
+                }
+            });
+        }
     }
 
 }

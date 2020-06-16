@@ -1,9 +1,12 @@
 package com.example.prefecturailb.moduleAccount.model;
 
+import com.example.prefecturailb.R;
+import com.example.prefecturailb.common.BasicListener;
 import com.example.prefecturailb.common.pojo.Maestro;
 import com.example.prefecturailb.common.pojo.User;
 import com.example.prefecturailb.moduleAccount.events.AccountEvents;
 import com.example.prefecturailb.moduleAccount.model.dataAccess.Authentication;
+import com.example.prefecturailb.moduleAccount.model.dataAccess.GroupExistCallback;
 import com.example.prefecturailb.moduleAccount.model.dataAccess.MaestrosEventListener;
 import com.example.prefecturailb.moduleAccount.model.dataAccess.RealTimeDataBase;
 import com.example.prefecturailb.moduleAccount.model.dataAccess.UserCallBack;
@@ -63,6 +66,36 @@ public class AccountInteractorClass implements AccountInteractor{
         });
     }
 
+    @Override
+    public void assistance(User user, String hora, String fecha, String grupo, String salon) {
+            mRealTimeDataBase.checkGroupExist(user.getName().toUpperCase(), grupo, user.getType(), new GroupExistCallback() {
+                @Override
+                public void onSuccess() {
+                    mRealTimeDataBase.assistence(user.getName().toUpperCase(), grupo, user.getType(), new BasicListener() {
+                        @Override
+                        public void onSuccess(int event) {
+                            post(event);
+                        }
+
+                        @Override
+                        public void onError(int typeEvent, int resMsg) {
+                            post(typeEvent,resMsg);
+                        }
+                    });
+                }
+
+                @Override
+                public void onNotExist() {
+                    post(AccountEvents.NO_GROUP_ERROR, R.string.error_no_group);
+                }
+
+                @Override
+                public void onError() {
+                    post(AccountEvents.CONNECTION_ERROR,R.string.error_connection);
+                }
+            });
+    }
+
 
     private void post(ArrayList<Maestro> maestros, int typeEvent, int resMsg, User user){
         AccountEvents events = new AccountEvents();
@@ -85,4 +118,7 @@ public class AccountInteractorClass implements AccountInteractor{
         post(null, typeEvent, resMsg, null);
     }
 
+    private void post(int typeEvent){
+        post(typeEvent,0);
+    }
 }
