@@ -76,10 +76,11 @@ public class AccountActivity extends AppCompatActivity implements AccountView, O
     //Método de la interface OnItemClickListener
     @Override
     public void onItemClicked(Maestro maestro) {
+        /*
         Intent intent = new Intent(AccountActivity.this, MateriaActivity.class);
         intent.putExtra(User.NAME,maestro.getNombre());
         startActivity(intent);
-        finish();
+        finish();*/
     }
 
     @Override
