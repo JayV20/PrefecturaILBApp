@@ -16,14 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.prefecturailb.R;
 import com.example.prefecturailb.common.pojo.Maestro;
-import com.example.prefecturailb.common.pojo.User;
 import com.example.prefecturailb.moduleAccount.AccountPresenter;
 import com.example.prefecturailb.moduleAccount.AccountPresenterClass;
 import com.example.prefecturailb.moduleAccount.adapters.MaestrosAdapter;
 import com.example.prefecturailb.moduleAccount.adapters.OnItemClickListener;
 import com.example.prefecturailb.moduleAccount.utils.Constants;
 import com.example.prefecturailb.moduleLogin.view.MainActivity;
-import com.example.prefecturailb.moduleMateria.view.MateriaActivity;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -47,7 +45,7 @@ public class AccountActivity extends AppCompatActivity implements AccountView, O
     RecyclerView recyclerview;
 
     private AccountPresenter mPresenter;
-    private MaestrosAdapter maestrosAdapter;
+    private MaestrosAdapter mAdapter;
     /**
      * ButterKnife dependence.
      */
@@ -66,11 +64,11 @@ public class AccountActivity extends AppCompatActivity implements AccountView, O
 
     private void configRecyclerView() {
         recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        recyclerview.setAdapter(maestrosAdapter);
+        recyclerview.setAdapter(mAdapter);
     }
 
     private void configAdapter() {
-        maestrosAdapter = new MaestrosAdapter( new ArrayList<Maestro>(), this);
+        mAdapter = new MaestrosAdapter( new ArrayList<Maestro>(), this);
     }
 
     //Método de la interface OnItemClickListener
@@ -85,7 +83,7 @@ public class AccountActivity extends AppCompatActivity implements AccountView, O
 
     @Override
     public void onGetList(ArrayList<Maestro> maestros) {
-        maestrosAdapter.setMaestros(maestros);
+        mAdapter.setMaestros(maestros);
     }
 
 
